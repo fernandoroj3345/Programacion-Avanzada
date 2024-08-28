@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empresas de Trading - CoinAPI</title>
+</head>
+<body>
+    <h1>Empresas de Trading</h1>
+    <!-- Script para realizar la solicitud a la API de CoinAPI usando async/await -->
+    <script>
+        const apiKey = 'e7b98d77-8bce-4dcb-9dd8-ba86469c78db'; // API DE  CoinAPI
+        const url = 'https://rest.coinapi.io/v1/exchanges';
+
+        async function obtenerEmpresasDeTrading() {
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-CoinAPI-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                mostrarEmpresasDeTrading(data);
+            } catch (error) {
+                console.warn('Error al consumir la API:', error);
+            }
+        }
+
+        function mostrarEmpresasDeTrading(data) {
+            const exchangeList = document.createElement('ul');
+
+            data.forEach(exchange => {
+                const listItem = document.createElement('li');
+
+                // Sol se muestran los atributos especificados
+                listItem.innerHTML = `
+                    <strong>Nombre:</strong> ${exchange.name} <br>
+                    <strong>Volumen (última hora en USD):</strong> ${exchange.volume_1hrs_usd ? exchange.volume_1hrs_usd.toLocaleString('en-US', {style: 'currency', currency: 'USD'}) : 'No disponible'} <br>
+                    <strong>Volumen (último día en USD):</strong> ${exchange.volume_1day_usd ? exchange.volume_1day_usd.toLocaleString('en-US', {style: 'currency', currency: 'USD'}) : 'No disponible'} <br><br>
+                `;
+                exchangeList.appendChild(listItem);
+            });
+
+            document.body.append(exchangeList);
+        }
+
+        // Llamo a la función async para obtener y mostrar los datos
+        obtenerEmpresasDeTrading();
+    </script>
+</body>
+</html>
